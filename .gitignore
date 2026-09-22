@@ -1,0 +1,29 @@
+__pycache__/
+*.py[cod]
+*$py.class
+
+# virtual environments
+.venv/
+venv/
+env/
+
+# secrets — never commit
+.env
+.env.*
+!.env.example
+
+# lab artefacts produced while following the modules
+output/
+*.log
+.tmp/
+
+# editor / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# local databases / vector store dumps
+*.sqlite
+*.db
+pgdata/
