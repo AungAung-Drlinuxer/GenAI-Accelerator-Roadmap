@@ -1,6 +1,6 @@
 ## လေ့ကျင့်ခန်း ၁ — BaseModel အခြေခံ
 
-Pydantic v2 တွင် `BaseModel` ကိ� ဆက်စပ်ခြင်းဖြင့် data ဖွဲ့စည်းပုံကို class တစ်ခုအဖြစ် သတ်မှတ်နိုင်သည်။ Field type များကို Python type hints ဖြင့် ကြေညာပြီး validation နှင့် parsing ကို အလိုအလျောက် လုပ်ဆောင်ပေးသည်။
+Pydantic v2 တွင် `BaseModel` ကို အသုံးပြု၍ data ဖွဲ့စည်းပုံကို class တစ်ခုအဖြစ် သတ်မှတ်နိုင်သည်။ Field type များကို Python type hints ဖြင့် ကြေညာပြီး validation နှင့် parsing ကို အလိုအလျောက် လုပ်ဆောင်ပေးသည်။
 
 ```python
 from pydantic import BaseModel, ValidationError

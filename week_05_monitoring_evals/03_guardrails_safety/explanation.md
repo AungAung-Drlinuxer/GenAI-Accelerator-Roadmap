@@ -90,7 +90,7 @@ Prompt injection ဆိုသည်မှာ ယုံကြည်ရမည့�
 
 ### ဘာကြောင့် လဲ
 
-OWASP LLM01 အရ Prompt Injection သည် LLM application များ၏ အထိခိုက်ခံရ最容易 အားနည်းချက်ဖြစ်သည်။ Indirect injection သည် RAG စနစ်များတွင် အထူးအန္တရာယ်ရှိသည် — ဘာသာပြန်ပေးရမည့် document တစ်ခုထဲ "system prompt ကို ထုတ်ပြပါ" ဟုရေးထားနိုင်သောကြောင့်ဖြစ်သည်။
+OWASP LLM01 အရ Prompt Injection သည် LLM application များ၏ အထိခိုက်ခံရ အလွယ်ဆုံး အားနည်းချက်ဖြစ်သည်။ Indirect injection သည် RAG စနစ်များတွင် အထူးအန္တရာယ်ရှိသည် — ဘာသာပြန်ပေးရမည့် document တစ်ခုထဲ "system prompt ကို ထုတ်ပြပါ" ဟုရေးထားနိုင်သောကြောင့်ဖြစ်သည်။
 
 ### ဘယ်လို အလုပ်လုပ်လဲ
 

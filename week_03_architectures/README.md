@@ -2,7 +2,7 @@
 
 ## ဒီပတ်မှာ ဘာသင်မလဲ
 
-ဒီပတ်မှာ AI backend တစ်ခုကို production အဆင့်မှာ တည်ဆောက်ဖို့ လိုအပ်တဲ့ architecture အခြေခံများနဲ့ containerization နည်းပညာများကို လေ့လာပါမယ်။ FastAPI နဲ့ service design ၊ Celery + Redis နဲ့ background jobs ၊ PostgreSQL + pgvector နဲ့ vector search ၊ နောက်ဆုံးမှာ Docker နဲ့ တစ်ခုတည်းသော system အဖြစ် ချိတ်ဆက်ပါမယ်။
+ဒီပတ်မှာ AI backend တစ်ခုကို production အဆင့်မှာ တည်ဆောက်ဖို့ လိုအပ်တဲ့ architecture အခြေခံများနဲ့ containerization နည်းပညာများကို လေ့လာပါမယ်။ FastAPI နဲ့ service design၊ Celery + Redis နဲ့ background jobs၊ PostgreSQL + pgvector နဲ့ vector search၊ နောက်ဆုံးမှာ Docker နဲ့ တစ်ခုတည်းသော system အဖြစ် ချိတ်ဆက်ပါမယ်။
 
 ## Modules
 
@@ -30,6 +30,6 @@
 ## Checkpoint
 
 1. FastAPI မှာ dependency injection ကို ဘာကြောင့် သုံးသင့်ပြီး database connection တစ်ခုကို ဘယ်လို share လုပ်သလဲ။
-2. Celery task တစ်ခ�်ကို idempotent ဖြစ်စေဖို့ idempotency key ကို ဘယ်လို အသုံးချသင့်လဲ။
+2. Celery task တစ်ခုကို idempotent ဖြစ်စေဖို့ idempotency key ကို ဘယ်လို အသုံးချသင့်လဲ။
 3. pgvector မှာ HNSW နဲ့ IVFFlat index နှစ်ခုကွာခြားချက်က ဘာလဲ၊ ဘယ်အချိန်မျိုးမှာ ဘယ်ဟာ ရွေးသင့်လဲ။
 4. multi-stage Docker build က image size ကို ဘယ်လို လျှော့ချပေးလဲ၊ compose file ထဲမှာ api, worker, db, redis တွေကို ဘယ်လို ချိတ်ဆက်သလဲ။

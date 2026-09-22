@@ -238,12 +238,12 @@ if __name__ == "__main__":
 
 **အဓိကအယူအဆ** — Regression gate ဆိုသည်မှာ average eval score ကို သတ်မှတ် threshold နှင့် နှိုင်းယှဉ်ပြီး အောက်နိမ့်ပါက exit code `1` ဖြင့် pipeline ကို ရပ်ဆိုင်းခြင်းအားဖြင့် အရည်အသွေးကျဆင်းသော model များ production သို့ မရောက်ရှိစေရန် ကာကွယ်ပေးသည့် အလိုအလျောက် ထိန်းချုပ်မှု ယန္တယ်းအဆင့် ဖြစ်သည်။
 
-## လေ့ကျင့်ခန်း ၆ — CI Pipeline တွင် Eval ထည့်သွင်းခြင်းး
+## လေ့ကျင့်ခန်း ၆ — CI Pipeline တွင် Eval ထည့်သွင်းခြင်း
 
 ```python
 """
-CI Pipeline အတွက် eval setup ကို စစ်ဆေးသည့် helper script။
-GitHub Actions workflow file ကို ဖန်တီးပြီး exit code logic ကို စမ်းသပ်သည်။
+Helper script that checks the eval setup used by CI.
+Creates the GitHub Actions workflow file and exercises the exit-code logic.
 """
 
 import subprocess

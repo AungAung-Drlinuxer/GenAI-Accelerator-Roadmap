@@ -22,7 +22,7 @@ LLM application များအတွက် input/output validation, PII redacti
 
 ## လိုအပ်ချက်များ (Prerequisites)
 
-- Python အ基础 (function, class, exception) ရေးတတ်ရမည်
+- Python အခြေခံ (function, class, exception) ရေးတတ်ရမည်
 - Pydantic basic usage ကို သိရှိရမည် (`pip install pydantic`)
 - LLM API ခေါ်သည့် code ဖတ်နိုင်စွမ်းရှိရမည်
 - Regular expression အခြေခံကို နားလည်ရမည်

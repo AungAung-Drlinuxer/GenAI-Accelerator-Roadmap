@@ -1,6 +1,6 @@
 ## လေ့ကျင့်ခန်း ၁ — Celery App နှင့် Redis Broker အခြေခံ
 
-`celery_app.py` ဖိုင်တစ်ခု ရေးပါ။ Broker နှင့် result backend နှစ်ခုစလုံးအတွက် Redis ကို အသုံးပြုပါ။ အလွယ်တစ်ခုဖြစ်သော `add(x, y)` task ကို define လုပ်ပါ။ ထို့နောက် terminal နှစ်ခုဖွင့်ကာ — တစ်ခုတွင် worker ကို `celery -A celery_app worker --loglevel=info` ဖြင့် run ပြီး 另一个တစ်ခုမှ Python shell အတွင်း `add.delay(3, 4)` ကို ခေါ်ပါ။
+`celery_app.py` ဖိုင်တစ်ခု ရေးပါ။ Broker နှင့် result backend နှစ်ခုစလုံးအတွက် Redis ကို အသုံးပြုပါ။ အလွယ်တစ်ခုဖြစ်သော `add(x, y)` task ကို define လုပ်ပါ။ ထို့နောက် terminal နှစ်ခုဖွင့်ကာ — တစ်ခုတွင် worker ကို `celery -A celery_app worker --loglevel=info` ဖြင့် run ပြီး ကျန်တစ်ခုမှာ Python shell အတွင်း `add.delay(3, 4)` ကို ခေါ်ပါ။
 
 ```python
 # celery_app.py

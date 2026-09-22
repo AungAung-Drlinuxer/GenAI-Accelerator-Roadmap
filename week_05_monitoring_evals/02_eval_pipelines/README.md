@@ -6,7 +6,7 @@ LLM application တစ်ခုရဲ့ quality ကို တိုင်းတ
 
 - Prompt version တစ်ခုစီအတွက် evaluation dataset ကို စနစ်တကျ ဒီဇိုင်းဆွဲနည်း
 - Rule-based (deterministic) scoring နဲ့ LLM-as-a-judge scoring ရဲ့ ကွာခြားချက်နဲ့ သင့်တော်ရာ ရွေးချယ်နည်း
-- pytest သုံးပြီး evaluation run တွေကို CI pipeline ထဲထည့်跑တင်နည်း
+- pytest သုံးပြီး evaluation run တွေကို CI pipeline ထဲထည့်တင်နည်း
 - Threshold သတ်မှတ်ပြီး regression ဖြစ်ရင် deploy ကို ရပ်တန့်စေတဲ့ gate ဆောက်နည်း
 - Prompt version အလိုက် score တွေကို Langfuse နဲ့ တိုက်ရိုက် မှတ်တမ်းတင်ပြီး နှိုင်းယှဉ်ကြည့်နည်း
 

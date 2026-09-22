@@ -20,7 +20,7 @@
 
 ## လိုအပ်ချက်များ (Prerequisites)
 
-- Week 1–4 အထိရှိတဲ့ Python အ基础 နဲ့ LLM API ခေါ်သုံးနည်း နားလည်မှု
+- Week 1–4 အထိရှိတဲ့ Python အခြေခံ နဲ့ LLM API ခေါ်သုံးနည်း နားလည်မှု
 - `pip install langfuse` နဲ့ Langfuse account (cloud သို့မဟုတ် self-hosted)
 - Langfuse project ရဲ့ `LANGFUSE_PUBLIC_KEY` နဲ့ `LANGFUSE_SECRET_KEY`
 

@@ -14,7 +14,7 @@ def count_tokens(text):
 
 # Test with English and Burmese text
 english = "The customer asked for a refund."
-burmese = "ဖောက်သည်က ပြန်အမ်းငွေ တောင်းဆိုခဲ့ပါသည်။"
+burmese = "ဖောက်သည်က ပြန်အမ်းငွေ တောင်းဆိုခဲ့ပါသည်။"  # intentional: Burmese sample data
 
 print(count_tokens(english))
 print(count_tokens(burmese))

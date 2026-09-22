@@ -36,7 +36,7 @@ for step in dockerfile_steps:
 ```
 
 ### လက်တွေ့မှာ ဘာကြောင့် အရေးကြီးလဲ
-Production တွင် application တစ်ခုကို server တစ်ခုမှ အခြားတစ်ခုသို့ ရွှေ့ယူရသည်မှာ မဖြစ်မနေ ဖြစ်လာသည်။ Dockerfile ရှိပါက `docker build` နှင့် `docker run` command နှစ်ခုသာလိုသဖြင့် deployment ကို တုန်းရိုက်၍ ပြန်လုပ်နိုင်သည်။ ထိ့့အပြင် `requirements.txt` ကို code များမထက် အရင် COPY လုပ်ခြင်းဖြင့် code ပြင်တိုင်း dependency များကို ပြန် install မလုပ်ရသော layer caching အကျိုးကျေးဇူးလည်း ရရှိသည်။
+Production တွင် application တစ်ခုကို server တစ်ခုမှ အခြားတစ်ခုသို့ ရွှေ့ယူရသည်မှာ မဖြစ်မနေ ဖြစ်လာသည်။ Dockerfile ရှိပါက `docker build` နှင့် `docker run` command နှစ်ခုသာလိုသဖြင့် deployment ကို တုန်းရိုက်၍ ပြန်လုပ်နိုင်သည်။ ထိ့အပြင် `requirements.txt` ကို code များမထက် အရင် COPY လုပ်ခြင်းဖြင့် code ပြင်တိုင်း dependency များကို ပြန် install မလုပ်ရသော layer caching အကျိုးကျေးဇူးလည်း ရရှိသည်။
 
 ## 2. Multi-stage builds
 
@@ -139,4 +139,33 @@ print("API key loaded from env:", bool(get_required_env("OPENAI_API_KEY")))
 ```
 
 ### လက်တွေ့မှာ ဘာကြောင့် အရေးကြီးလဲ
-Production secret တစ်ခု leaked ဖြစ်ခြင်းသည် ကုမ္ပဏီတစ်ခုအတွက် စီးပွားရေးနှင့် ကိုယ်လက်ခံခြင်း
+Production secret တစ်ခု leaked ဖြစ်ခြင်းသည် ကုမ္ပဏီတစ်ခုအတွက် စီးပွားရေးနှင့် ကိုယ်လက်ခံခြင်း (reputation) ဆုံးရှုံးမှု ဖြစ်စေနိုင်သည်။ MCP server တစ်ခုသည် အခြား service များနှင့် ချိတ်ဆက်ရန် API key များ လိုအပ်သဖြင့် ဤနည်းလမ်းသည် Docker-based MCP setup တွင် မဖြစ်မနေ လိုအပ်သည်။ အရေးကြီးသော အချက်များမှာ —
+
+- **`.gitignore` တွင် `.env` ထည့်ရန်** — secret ပါသော ဖိုင်ကို repo ထဲ မတက်စေရန်။
+- **Fail-fast စစ်ဆေးရန်** — server စတင်ချိန်မှာပဲ variable ရှိမရှိ စစ်ပြီး မရှိလျှင် ချက်ချင်း error ပြရန်၊ နောက်ပိုင်းမှာ ရှာပါ ခက်စေရန်။
+- **Default value မထည့်ရန်** — `os.environ.get("KEY", "hardcoded-default")` ကဲ့သို့ ရေးပါက secret တစ်ခု မသတ်မှတ်ဘဲ server လည်နေနိုင်ပြီး အမှားကို မြင်ရခက်သည်။
+
+### Compose ဖြင့် တွဲစပ်အသုံးပြုပုံ
+
+`.env` ဖိုင် (repo ထဲ မထည့်ရ):
+
+```text
+OPENAI_API_KEY=sk-real-key-goes-here
+DATABASE_URL=postgresql://appuser:strongpassword@db:5432/appdb
+```
+
+`docker-compose.yml` တွင် Compose က တူညီသော နာမည်ပေးထားသော `.env` ဖိုင်ကို အလိုအလျောက် ဖတ်ယူသည်:
+
+```yaml
+services:
+    mcp-server:
+        build: .
+        environment:
+            - OPENAI_API_KEY=${OPENAI_API_KEY}
+            - DATABASE_URL=${DATABASE_URL}
+```
+
+ဤနည်းဖြင့် code တွင် secret တစ်ခုမျှ မရေးသွင်းဘဲ၊ development နှင့် production အတွက် `.env` ဖိုင် ကွဲပြားသော တန်ဖိုးများသာ ပြောင်းလဲပေးခြင်းဖြင့် တူညီသော image ကို အသုံးပြုနိုင်သည်။
+
+### အနှစ်ချုပ်
+Secret များကို code ထဲ မရေးဘဲ environment variable များဖြင့် container ထဲ ပို့ပါ။ `.env` ကို `.gitignore` ထည့်ပါ။ Server စတင်ချိန်တွင် fail-fast စစ်ဆေးခြင်းဖြင့် အမှားများကို စောစောသိရန် ပြုလုပ်ပါ။

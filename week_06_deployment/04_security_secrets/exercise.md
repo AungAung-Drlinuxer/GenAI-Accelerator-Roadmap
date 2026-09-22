@@ -73,7 +73,7 @@ GRANT SELECT ON messages TO analyst_ro;
 
 ## လေ့ကျင့်ခန်း ၄ — Network Boundary စိတ်ကူးယဉ် ပုံဆွဲခြင်း
 
-LLM application တစ်ခုအတွက် network zones များ ပါဝင်သော diagram (စာသားဖြင့် သို့မဟုတ် draw.io) ရေးဆွဲပါ — public ingress, app tier, database tier, external LLM API egress။ ပြီးပါက egress ကိ�းရီးရိုက်ရေးရေးပါ —
+LLM application တစ်ခုအတွက် network zones များ ပါဝင်သော diagram (စာသားဖြင့် သို့မဟုတ် draw.io) ရေးဆွဲပါ — public ingress, app tier, database tier, external LLM API egress။ ပြီးပါက egress ကို စာရင်းပြုစုပါ —
 
 ```yaml
 # Kubernetes NetworkPolicy: app pods may only reach the LLM API domain via egress proxy

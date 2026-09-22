@@ -31,7 +31,7 @@ def score_keywords(response: str, expected_keywords: list[str]) -> float:
 
 **Expected behavior:** `pytest test_eval.py -v` ပြေးလျှင် test ၃ ခုလုံး `PASSED` ဖြစ်သည်။ Threshold ကို `1.2` ဟု ပြောင်းလျှင် (c) test သည် `FAILED` ဖြစ်သည်။
 
-## လေ့ကျင့်ခန်း ၄ — LLM-as-Judge 评分 Function
+## လေ့ကျင့်ခန်း ၄ — LLM-as-Judge အမှတ်ပေးခြင်း Function
 
 `score_with_judge(question: str, response: str, criteria: str) -> float` ဆိုသော function ရေးပါ။ ယခုအဆင့်တွင် judge အဖြစ် မိမိကိုယ်တိုင် လက်ဖြင့် အမှတ်ပေးမည့် mock version ဖြစ်သော `mock_judge.py` module ကို ရေးပြီး၊ နောက်ပိုင်းတွင် API call နှင့် လွယ်ကူစွာ လဲလှယ်နိုင်ရန် interface ကို ဒီဇိုင်းပါ။ Judge prompt တွင် question, response၊ criteria၊ ပြီးလျှင် "0.0 မှ 1.0 အတွင်း မှတ်ချက်တစ်ခုသာ ထုတ်ပေးပါ" ဟူသော ညွှန်ကြားချက် ပါဝင်ရမည်။
 
@@ -47,7 +47,7 @@ def score_keywords(response: str, expected_keywords: list[str]) -> float:
 
 **Expected behavior:** `python run_evals.py --threshold 0.3` ပြေးလျှင် exit code `0`၊ `--threshold 0.95` ပြေးလျှင် exit code `1` ရရှိသည်။ `echo $?` ဖြင့် စစ်ဆေးနိုင်သည်။
 
-## လေ့ကျင့်ခန်း ၆ — CI Pipeline တွင် Eval ထည့်သွင်းခြင်းး
+## လေ့ကျင့်ခန်း ၆ — CI Pipeline တွင် Eval ထည့်သွင်းခြင်း
 
 GitHub Actions workflow file `.github/workflows/eval.yml` ကို ရေးပါ။ Python ၃.၁၁ setup လုပ်ပြီး dependencies install ၍ `pytest test_eval.py` ကို run ၍ ထို့နောက် `python run_evals.py --threshold 0.7` ကို run ရမည်။ Eval တစ်ခုမှ ပျက်လျှင် pipeline က တစ်ပြိုင်နက် ရပ်တန့် (fail) သွားရမည်။ README တစ်လက်ဖြင့် prompt version တစ်ခု တစ်ခေါက deploy ချင်း threshold ကို မည်သို့ တစ်ဆင့်တိုး မြှင့်နိုင်/လျှော့နိုင်ကြောင်း မှတ်တမ်းတင်ပါ။
 

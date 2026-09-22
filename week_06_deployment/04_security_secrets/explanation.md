@@ -3,7 +3,7 @@
 ## ၁. Secrets ကိ Vault ထဲမှာ သိမ်းခြင်း (Git ထဲ မထည့်ရ)
 
 ### ဘာကို ဆိုလိုတာလဲ
-Secrets ဆိုတာက API keys, database passwords, tokens စသည့့ လျှို့ဝှက်သတင်းအချက်အလက်များဖြစ်သည်။ ဒီအရာများကို source code repository (git) ထဲတွင် တိုက်ရိုက်ရေးသားထားခြင်း မပြုဘဲ HashiCorp Vault ကဲ့သို့သော secrets management system တစ်ခုထဲတွင် သိမ်းဆည်းထားရမည်။
+Secrets ဆိုတာက API keys, database passwords, tokens စသည့ လျှို့ဝှက်သတင်းအချက်အလက်များဖြစ်သည်။ ဒီအရာများကို source code repository (git) ထဲတွင် တိုက်ရိုက်ရေးသားထားခြင်း မပြုဘဲ HashiCorp Vault ကဲ့သို့သော secrets management system တစ်ခုထဲတွင် သိမ်းဆည်းထားရမည်။
 
 ### ဘာကြောင့် လဲ
 Git history သည် ပျက်စီးရန် ခက်ခဲသည်။ Secret တစ်ခုကို commit လုပ်မိပါက commit history တစ်လျှောက် ကျန်ရစ်မည်ဖြစ်ပြီး repo ကို share လုပ်သည့်အခါ သူများ မြင်နိုင်သည်။ Public repo တစ်ခုတွင် secret  leaked ဖြစ်မှုက bot များက မိနစ်ပိုင်းအတွင်း ရှာတွေ့တတ်သည်။
@@ -226,4 +226,66 @@ OWASP LLM Top 10 ၏ LLM01 (Prompt Injection) တိုက်ခိုက်မ�
 ## ၆. Key Rotation (သော့များ လည်ပတ်ပြောင်းလဲခြင်း)
 
 ### ဘာကို ဆိုလိုတာလဲ
-API keys နှင့် passwords များကို သတ်မှတ်ကာလအတိုင်း ပုံမှန်ပြောင်းလဲပေးခြင်းဖြစ်သည်။ Vault ကဲ့သို့သော system များက dynamic credentials များ အလိုအလျောက်ထုတ်ပေးပြီး TTL ကုန်ဆုံးလျှင် လည်ပတ်ပြောင်း
+API keys နှင့် passwords များကို သတ်မှတ်ကာလအတိုင်း ပုံမှန်ပြောင်းလဲပေးခြင်းဖြစ်သည်။ Vault ကဲ့သို့သော system များက dynamic credentials များ အလိုအလျောက်ထုတ်ပေးပြီး TTL ကုန်ဆုံးလျှင် လည်ပတ်ပြောင်းလဲသွားစေသည်။ ဤနည်းဖြင့် secret တစ်ခု ထွက်ပေါ်သွားပါက အချိန်ကာလအနည်းငယ်အတွင်းသာ အသုံးပြုနိုင်မည်ဖြစ်သဖြင့် အန္တရာယ်ကို သိသိသာသာ လျှော့ချပေးနိုင်သည်။
+
+### ဘာကြောင့် အရေးကြီးသလဲ
+- **Leak အန္တရာယ် လျှော့နည်းသွားသည်** — သော့တစ်ခု ထွက်ပေါ်ခဲ့ပါက ၎င်းသည် ကာလတိုအတွင်း ပျက်သွားမည်ဖြစ်သည်။
+- **Compliance လိုအပ်ချက်များ ပြီးမြောက်သည်** — SOC 2 နှင့် PCI-DSS ကဲ့သို့သော standard များတွင် rotation policy တောင်းဆိုခြင်း ရှိသည်။
+- **Audit trail ရရှိသည်** — သော့မည်သူ သုံးခဲ့သည်၊ မည်သည့်အချိန်တွင် ထုတ်ပေးခဲ့သည်ကို မှတ်တမ်းတင်နိုင်သည်။
+
+### Python ဖြင့် အရေးပုံးရိုက်ထားသော rotation example
+
+```python
+import datetime
+import hashlib
+import os
+
+class RotatingKeyManager:
+    """Manages API keys with automatic rotation based on expiry time."""
+
+    def __init__(self, rotation_days: int = 30):
+        self.rotation_days = rotation_days
+        self.keys = {}  # key_id -> {"value": str, "created_at": datetime, "active": bool}
+
+    def generate_key(self) -> str:
+        """Generate a new random key and store it with a timestamp."""
+        key_id = f"key_{len(self.keys) + 1}"
+        raw_value = hashlib.sha256(os.urandom(32)).hexdigest()
+        self.keys[key_id] = {
+            "value": raw_value,
+            "created_at": datetime.datetime.utcnow(),
+            "active": True,
+        }
+        return key_id
+
+    def is_expired(self, key_id: str) -> bool:
+        """Check whether a key has passed its rotation period."""
+        key = self.keys[key_id]
+        age = datetime.datetime.utcnow() - key["created_at"]
+        return age.days >= self.rotation_days
+
+    def rotate_key(self, key_id: str) -> str:
+        """Deactivate an expired key and issue a fresh replacement."""
+        if key_id not in self.keys:
+            raise KeyError(f"Unknown key: {key_id}")
+        self.keys[key_id]["active"] = False
+        print(f"[rotation] old key {key_id} deactivated")
+        new_key_id = self.generate_key()
+        print(f"[rotation] new key {new_key_id} issued")
+        return new_key_id
+
+
+# Simple usage example
+manager = RotatingKeyManager(rotation_days=30)
+key_id = manager.generate_key()
+print(f"issued: {key_id}")
+
+if manager.is_expired(key_id):
+    key_id = manager.rotate_key(key_id)
+```
+
+### Zero-downtime rotation နည်းလမ်း
+Rotation လုပ်သည့်အခါ service ပျက်ကျမသွားစေရန် **dual-key period** အသုံးပြုသည် — သော့အသစ်ထုတ်ပေးပြီး သော့အဟောင်းကို ခဏတာ အလုပ်လုပ်ခွင့်ထားပြီးနောက် ပိတ်ပစ်သည်။ ဥပမာအားဖြင့် JWT signing key များကို `kid` (key ID) header ဖြင့် ခွဲခြားပြီး သော့နှစ်ခုစလုံးကို verify လုပ်ခွင့်ပေးထားနိုင်သည်။
+
+### အနှစ်ချုပ်
+Key rotation ဆိုသည်မှာ secret များ၏ သက်တမ်းကို တိုစေပြီး အန္တရာယ်ကို ကန့်သတ်ပေးသည့် ကာကွယ်မှုတစ်မျိုးဖြစ်သည်။ Environment variables တွင် manual rotation လုပ်နိုင်သလို Vault ကဲ့သို့သော tool များဖြင့် အလိုအလျောက် rotation ပြုလုပ်နိုင်သည်။ Production system များတွင် rotation period ကို ၉၀ ရက်ထက် မကျော်စေဘဲ သတ်မှတ်သင့်သည်။

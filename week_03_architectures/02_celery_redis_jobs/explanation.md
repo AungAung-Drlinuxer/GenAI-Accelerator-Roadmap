@@ -11,7 +11,7 @@ Task queue ဆိုသည်မှာ ဆော့ဖ်ဝဲအလုပ်�
 LLM generation တစ်ခုသည် စက္ကန့်အတော်များများ ကြာနိုင်သည်။ HTTP request တစ်ခုအတွင်းမှာ စောင့်နေပါက server ၏ worker thread တွေ ပိတ်သွားပြီး အခြား user တွေရဲ့ request တွေပါ နှောင့်နှေးသွားနိုင်သည်။ ထို့အပြင် request timeout ကြောင့် အလုပ်မပြီးမီ ဆက်သွယ်မှု ပြတ်တောက်နိုင်သည်။ Task queue ကို အသုံးပြုခြင်းအားဖြင့် user ချက်ချင်း တုံ့ပြန်မှုရပြီး၊ အလုပ်ကြီးကတော့ နောက်ကွယ်မှ ဆက်လက် လုပ်ဆောင်သွားမည်ဖြစ်သည်။
 
 ### ဘယ်လို အလုပ်လုပ်လဲ
-Celery architecture တွင် အစိတ်အပိုင်း သုံးခုရှိသည် — (1) **Producer** သည် task ကို queue ထဲထည့်သည်၊ (2) **Broker** (Redis) သည် စာတန်းကို သိမ်းဆည်းထားသည်၊ (3) **Worker** သည် queue မှ task ကို ယူ၍ လုပ်ဆောင်သည်။ Worker များကို တစ်ပြိုင်တည်း အများအပြား ဖွင့်ထားနိုင်သည်ကို "worker pool" ဟုခေါ်သည်။ Pool အမျိုးအစားများတွင် prefork (process အခြေပြု)، gevent (lightweight concurrency) စသည်တို့ပါဝင်ပြီး CPU-heavy အလုပ်အတွက် prefork ကို အသုံးများသည်။
+Celery architecture တွင် အစိတ်အပိုင်း သုံးခုရှိသည် — (1) **Producer** သည် task ကို queue ထဲထည့်သည်၊ (2) **Broker** (Redis) သည် စာတန်းကို သိမ်းဆည်းထားသည်၊ (3) **Worker** သည် queue မှ task ကို ယူ၍ လုပ်ဆောင်သည်။ Worker များကို တစ်ပြိုင်တည်း အများအပြား ဖွင့်ထားနိုင်သည်ကို "worker pool" ဟုခေါ်သည်။ Pool အမျိုးအစားများတွင် prefork (process အခြေပြု)၊ gevent (lightweight concurrency) စသည်တို့ပါဝင်ပြီး CPU-heavy အလုပ်အတွက် prefork ကို အသုံးများသည်။
 
 ### ဥပမာ
 
@@ -133,7 +133,7 @@ def generate_report(self, user_id: int, idempotency_key: str) -> str:
 Scheduling သည် task များကို သတ်မှတ်ချိန်အလိုက် အလိုအလျောက် လုပ်ဆောင်စေခြင်းဖြစ်သည် — ဥပမာ ညတိုင်း cron လုပ်ဆောင်ချက်ကဲ့သို့။ Celery Beat သည် ဒီကိစ္စအတွက် scheduler ဖြစ်သည်။ Long-running job ဆိုသည်မှာ မိနစ်ပေါင်းများစွာ ကြာနိုင်သော LLM အလုပ်ကြီးများကို ဆိုလိုသည်။
 
 ### ဘာကြောင့် လဲ
-Document re-indexing၊ model batch evaluation ကဲ့သို့သော အလုပ်များကို လူက လက်ဖြင့် လုပ်ရန် မသင့်ပါ။ နောက်ခံ scheduled job များဖြင့် အလိုအလျောက် လုပ်ဆောင်စေခြင်းက operational ဝန်ထုပ်ဝန်ပိုးကို လျှော့ချ်ပေးသည်။ Request path မှ ခွဲထုတ်ခြင်းက user experience ကို အာမခံပေးသည်။
+Document re-indexing၊ model batch evaluation ကဲ့သို့သော အလုပ်များကို လူက လက်ဖြင့် လုပ်ရန် မသင့်ပါ။ နောက်ခံ scheduled job များဖြင့် အလိုအလျောက် လုပ်ဆောင်စေခြင်းက operational ဝန်ထုပ်ဝန်ပိုးကို လျှော့ချပေးသည်။ Request path မှ ခွဲထုတ်ခြင်းက user experience ကို အာမခံပေးသည်။
 
 ### ဘယ်လို အလုပ်လုပ်လဲ
 Celery Beat သည် schedule config အတိုင်း သတ်မှတ်ချိန်ရောက်သည့်အခါ broker ထဲသို့ task အသစ်ထည့်ပေးသည်။ Long-running job တစ်ခုအတွက် လုပ်ငန်းစဉ်ကို အဆင့်ဆင့် ခွဲပြီး status ကို Redis ထဲ မှတ်တမ်းတင်ထားပါက user က progress ကို စစ်ဆေးနိုင်သည် — ဥပမာ polling endpoint တစ်ခုဖြင့်။
@@ -143,5 +143,67 @@ Celery Beat သည် schedule config အတိုင်း သတ်မှတ�
 ```python
 from celery_app import app
 from celery.schedules import crontab
+import redis
+
+r = redis.Redis(host="localhost", port=6379, db=1)
 
 @app.on_after_configure.connect
+def setup_periodic_tasks(sender, **kwargs):
+    # Runs every night at 2:30 AM
+    sender.add_periodic_task(
+        crontab(hour=2, minute=30),
+        reindex_documents.s(),
+    )
+
+@app.task(bind=True)
+def reindex_documents(self):
+    doc_ids = ["doc1", "doc2", "doc3", "doc4"]
+    total = len(doc_ids)
+    job_id = self.request.id
+
+    for i, doc_id in enumerate(doc_ids):
+        # Simulate slow embedding generation for each document
+        _generate_embedding(doc_id)
+        # Store progress in Redis so the user can poll it
+        r.hset(f"job:{job_id}", mapping={
+            "status": "running",
+            "processed": i + 1,
+            "total": total,
+        })
+
+    r.hset(f"job:{job_id}", mapping={
+        "status": "completed",
+        "processed": total,
+        "total": total,
+    })
+    return {"job_id": job_id, "indexed": total}
+
+def _generate_embedding(doc_id):
+    # Placeholder for a slow LLM embedding call
+    pass
+```
+
+Progress ကို စစ်ဆေးရန် polling endpoint တစ်ခုကို အောက်ပါအတိုင်း ရေးနိုင်သည် —
+
+```python
+from flask import Flask, jsonify
+
+api = Flask(__name__)
+
+@api.get("/jobs/<job_id>/status")
+def job_status(job_id):
+    data = r.hgetall(f"job:{job_id}")
+    if not data:
+        return jsonify({"error": "job not found"}), 404
+    return jsonify({
+        "status": data[b"status"].decode(),
+        "processed": int(data[b"processed"]),
+        "total": int(data[b"total"]),
+    })
+```
+
+### အားသာချက်များနှင့် သတိပြုရန်များ
+Scheduled task များက idempotent ဖြစ်ရမည် — ဆိုလိုသည်မှာ အကြိမ်ကြိမ် run သော်လည်း ရလဒ် တူညီရမည်။ Long-running job များကို ခွဲချင်း သေချာထားရမည်မှာ — worker ပျက်သွားပါက ပြန်စနိုင်ရန် checkpoint များ သိမ်းဆည်းထားသင့်သည်။ Celery Beat ကို single instance အဖြစ်သာ run ရမည် — မဟုတ်ပါက task များ ထပ်မံ deliver ဖြစ်နိုင်သည်။
+
+### အနှစ်ချုပ်
+Scheduling နှင့် long-running job များသည် production LLM system များ၏ မလွဲမသော အစိတ်အပိုင်းများဖြစ်သည်။ Celery Beat က အချိန်သတ်မှတ် လုပ်ဆောင်ချက်များကို အလိုအလျောက် စီမံပေးပြီး Redis-backed progress tracking က user များအား အလုပ်ကြီးများ၏ အခြေအနေကို မြင်တွေ့စေသည်။ ဤနှစ်ခုကို ပေါင်းစပ်အသုံးပြုခြင်းဖြင့် စနစ်ကို တိကျစွာ၊ အလိုအလျောက် လည်ပတ်နိုင်သော ပုံစံသို့ ရောက်ရှိစေနိုင်သည်။

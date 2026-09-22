@@ -191,4 +191,28 @@ with psycopg.connect("postgresql://user:pass@localhost/mydb") as conn:
         cur.execute(
             "INSERT INTO documents (content, embedding, model_name, model_version) "
             "VALUES (%s, %s, %s, %s)",
-            (text, emb, "all-MiniLM-L6
+            (text, emb, "all-MiniLM-L6-v2", "v1"),
+        )
+
+    conn.commit()
+
+    query_text = "How does RAG work?"
+    query_emb = model.encode(query_text)
+
+    with conn.cursor() as cur:
+        # Always filter by model metadata to avoid mixing vector spaces
+        cur.execute(
+            "SELECT content, embedding <=> %s AS distance "
+            "FROM documents "
+            "WHERE model_name = %s AND model_version = %s "
+            "ORDER BY distance LIMIT 3",
+            (query_emb, "all-MiniLM-L6-v2", "v1"),
+        )
+        for content, distance in cur.fetchall():
+            print(f"{distance:.4f}  {content}")
+```
+
+### သတိထားရန်
+- `<=>` operator သည pgvector ၏ cosine distance ဖြစ်ပြီး၊ တူညီသော model မှ ထုတ်သည့် vector များအကြားတွင်သာ အဓိပ္ပာယ်ရှိသည်။
+- Model ကို ပြောင်းမည်ဆိုပါက `model_version` ကို တစ်ဆင့် မြှင့်တင်ပြီး vector များကို အသစ်ပြန်ထုတ်ပေးရမည်။ သို့မဟုတ်ပါက ရှာဖွေမှုရလဒ်များ ယုံကြည်စိတ်ချရမည် မဟုတ်တော့ပါ။
+- Table တွင် index (ဥပမာ HNSW) ထည့်သွင်းပါက vector အရေအတွက် များလာသောအခါ ရှာဖွေမှု ပိုမြန်စေသည်။

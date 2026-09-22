@@ -76,7 +76,7 @@ def make_chunk_id(source, page, chunk_index, chunk_text):
 
 ## လေ့ကျင့်ခန်း ၅ — Semantic vs fixed chunking နှိုင်းယှဉ်ခြင်း
 
-`nltk` (သို့) ရိုးရိုး sentence splitting ဖြင့် ဝါကျ 경နားများအတိုင်း ခွဲသော semantic chunking function တစ်ခုရေးပြီး fixed chunking (လေ့ကျင့်ခန်း ၂) နှင့် နှိုင်းယှဉ်ပါ။ ဝါကျဖြတ်ပါးမှု အရေအတွက်၊ ပျမ်းမျှ chunk အရွယ်အစားနှင့် ဝါကျတစ်ခု နှစ်ပိုင်းကျနေမှု ရှိမရှိကို တွက်ပြပါ။
+`nltk` (သို့) ရိုးရိုး sentence splitting ဖြင့် ဝါကျ ခွဲခြားမှုများအတိုင်း ခွဲသော semantic chunking function တစ်ခုရေးပြီး fixed chunking (လေ့ကျင့်ခန်း ၂) နှင့် နှိုင်းယှဉ်ပါ။ ဝါကျဖြတ်ပါးမှု အရေအတွက်၊ ပျမ်းမျှ chunk အရွယ်အစားနှင့် ဝါကျတစ်ခု နှစ်ပိုင်းကျနေမှု ရှိမရှိကို တွက်ပြပါ။
 
 ```python
 import re

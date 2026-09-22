@@ -1,6 +1,6 @@
 # Ingestion & Chunking Strategies
 
-RAG စနစ်တစ်ခုမှာ အရေးအကြီးဆုံးအဆင့်က ingestion ဖြစ်သည် — စာရွက်စာတမ်းများကို ဖတ်ပြီး၊ သင့်တော်သောအရွယ်အစားရှိ chunk များအဖြစ် ခွဲကာ၊ vector database (ဥပမာ pgvector) ထဲသို့ သိမ်းဆည်းခြင်းဖြစ်သည်။ ဤ module တွင် parsing၊ chunking မျိုးစုံ၊ metadata ဒီဇိုင်း၊ idempotent re-ingestion နှင့် chunk size 的影响 တို့ကို လေ့လာပါမည်။
+RAG စနစ်တစ်ခုမှာ အရေးအကြီးဆုံးအဆင့်က ingestion ဖြစ်သည် — စာရွက်စာတမ်းများကို ဖတ်ပြီး၊ သင့်တော်သောအရွယ်အစားရှိ chunk များအဖြစ် ခွဲကာ၊ vector database (ဥပမာ pgvector) ထဲသို့ သိမ်းဆည်းခြင်းဖြစ်သည်။ ဤ module တွင် parsing၊ chunking မျိုးစုံ၊ metadata ဒီဇိုင်း၊ idempotent re-ingestion နှင့် chunk size ၏ သက်ရောက်မှုများ တို့ကို လေ့လာပါမည်။
 
 ---
 

@@ -158,4 +158,82 @@ Multi-tenant system တွေမှာ တစ်ယူဆာရဲ့ query က 
 Metadata ကို `metadata jsonb` column မှာ သိမ်းပြီး GIN index တပ်ပါ (`CREATE INDEX ON docs USING GIN (metadata jsonb_path_ops);`)။ Vector search query ထဲမှာ `WHERE metadata @> '{"tenant_id": "acme"}'` လို့ ထည့်ရင် pgvector က filtered candidate set အပေါ်မှာပဲ index scan လုပ်ပါတယ် — ဒါက pre-filter နည်းပါ။ Filter selectivity မြင့်ရင် pre-filter က index ကို ထိရိုက်စေပေမယ့် filter က loose ဖြစ်နေရင် partial index သို့မဟုတ် post-filter နည်း စဉ်းစားရပါတယ်။
 
 ### လက်တွေ့မှာ ဘာကြောင့် အရေးကြီးလဲ
-Retrieval quality က embedding တစ
+Retrieval quality က embedding တစ်ခုတည်းနဲ့ မပြီးပါဘူး — ဘယ် document တွေက ဘယ် context အတွက် လွှမ်းမိုးမှုရှိတယ်ဆိုတာကို metadata filter က ချိန်ပေးပါတယ်။ ဥပမာ — tenant တစ်ခုချင်းစီရဲ့ data isolation၊ document freshness (date filter)၊ document type အလိုက် routing (policy vs FAQ) စတာတွေက filter မရှိရင် result တွေ လွဲမှားပါတယ်။ ဒါ့အပြင် filter က performance ကိုပါ တိုးစေပါတယ် — scan လုပ်ရမဲ့ vector rows အရေအတွက်က လျှော့သွားလို့ရှိလို့ပါ။
+
+### နမူနာ SQL
+
+```sql
+CREATE TABLE docs (
+    id BIGSERIAL PRIMARY KEY,
+    content TEXT,
+    embedding VECTOR(1536),
+    metadata JSONB NOT NULL DEFAULT '{}'::jsonb
+);
+
+CREATE INDEX ON docs USING GIN (metadata jsonb_path_ops);
+```
+
+### နမူနာ Python
+
+```python
+import json
+import psycopg2
+
+def hybrid_search_with_filter(conn, query_embedding, query_text, tenant_id, top_k=10):
+    # Search within one tenant only, combining vector + keyword (tsvector) search
+    sql = """
+    WITH vec AS (
+        SELECT id, content, metadata
+        FROM docs
+        WHERE metadata @> %s::jsonb
+        ORDER BY embedding <=> %s::vector
+        LIMIT 50
+    ),
+    kw AS (
+        SELECT id, content, metadata
+        FROM docs
+        WHERE metadata @> %s::jsonb
+          AND content ILIKE '%%' || %s || '%%'
+        LIMIT 50
+    )
+    SELECT id, content, metadata,
+           1.0 / (60 + ROW_NUMBER() OVER (ORDER BY rank_vec)) +
+           1.0 / (60 + ROW_NUMBER() OVER (ORDER BY rank_kw)) AS rrf_score
+    FROM (
+        SELECT id, content, metadata,
+               ROW_NUMBER() OVER (ORDER BY embedding <=> %s::vector) AS rank_vec,
+               0 AS rank_kw
+        FROM vec
+        UNION ALL
+        SELECT id, content, metadata,
+               0 AS rank_vec,
+               ROW_NUMBER() OVER (ORDER BY id) AS rank_kw
+        FROM kw
+    ) combined
+    GROUP BY id, content, metadata,
+             ROW_NUMBER() OVER (ORDER BY embedding <=> %s::vector)
+    ORDER BY rrf_score DESC
+    LIMIT %s;
+    """
+    tenant_filter = json.dumps({"tenant_id": tenant_id})
+    with conn.cursor() as cur:
+        cur.execute(
+            sql,
+            (
+                tenant_filter,
+                query_embedding,
+                tenant_filter,
+                query_text,
+                query_embedding,
+                query_embedding,
+                top_k,
+            ),
+        )
+        return cur.fetchall()
+```
+
+### သတိထားရမည့်အချက်များ
+- Filter condition က query တိုင်းမှာ hardcoded မဖြစ်စေဘဲ parameter အနေနဲ့ ထည့်ပါ — user input ကနေ direct SQL string တည်ဆောက်တာက SQL injection အန္တရာယ်ရှိပါတယ်။
+- `@>` operator က nested keys (ဥပမာ `{"source": {"type": "pdf"}}`) တွေကိုပါ စစ်ပေးပါတယ်။
+- Filter က row အများကြီး ဖြတ်တောက်ရင် planner က sequential scan ပြောင်းသွားနိုင်လို့ `EXPLAIN ANALYZE` နဲ့ plan စစ်ကြည့်ပါ။
+- pgvector HNSW index က filtered query တွေမှာ recall ကျနိုင်လို့ `ef_search` setting ကို ချိန်ပေးဖို့ လိုနိုင်ပါတယ်။

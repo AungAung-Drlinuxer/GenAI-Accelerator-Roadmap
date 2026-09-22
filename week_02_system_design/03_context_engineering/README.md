@@ -4,7 +4,7 @@ LLM ဆီ ဆက်သွယ်ပေးတဲ့ context window ကို စ�
 
 ## ဒီ module မှာ ဘာသင်မလဲ
 - Context window ထဲမှာ ဘာတွေ ပါဝင်သလဲ၊ ဘယ်လောက်အထိ နေရာယူသလဲ
-- Document တွေကို တန်းစောင်းး ထည့်တဲ့ (stuffing) နည်းနဲ့ retrieval နည်း ကွာခြားချက်
+- Document တွေကို တန်းစောင်း ထည့်တဲ့ (stuffing) နည်းနဲ့ retrieval နည်း ကွာခြားချက်
 - Context ကို ဖြတ်တောက်ရင် "honest truncation" ဆိုတာ ဘာလဲ
 - ရှည်လျားတဲ့ စကားဝှက်များကို အနှစ်ချုပ် (summarisation) ဖြင့် စီမံနည်း
 - Prompt caching နဲ့ ကုန်ကျစရိတ်/latency သက်သာအောင် လုပ်နည်း

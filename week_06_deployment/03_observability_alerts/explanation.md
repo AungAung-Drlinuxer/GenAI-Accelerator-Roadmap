@@ -201,4 +201,60 @@ SLO (Service Level Objective) သည် service ၏ စွမ်းဆောင�
 
 ### ဘယ်လို အလုပ်လုပ်လဲ
 
-ပထမဦးစွာ လက်တွေ့ဘက်တွင် ရရှိနိုင်
+ပထမဦးစွာ လက်တွေ့ဘက်တွင် ရရှိနိုင်သော တန်ဖိုးများကို အခြေခံ၍ SLO ကို သတ်မှတ်ရမည် — လက်တွေ့မမှန်နိုင်သော ပစ်မှတ် (ဥပမာ p95 = 50ms) ကို ချမှတ်ပါက alert များ မကြာခဏ လင်းနေမည်ဖြစ်ပြီး alert fatigue ဖြစ်စေသည်။ ထို့နောက် request တိုင်း၏ latency နှင့် status code ကို log သို့မဟုတ် metrics system (Prometheus, CloudWatch စသည်) သို့ ပို့ပြီး အချိန်အတိုင်းအတာတစ်ခု (ဥပမာ မိနစ် ၅) အတွင်း rolling window ဖြင့် p95 latency နှင့် error rate ကို တွက်ချက်သည်။ တွက်ချက်ထားသော တန်ဖိုးများသည် သတ်မှတ်ထားသော threshold ကို ကျော်လွန်ပါက alert ကို လင်းစေသည်။
+
+Python ဖြင့် window တစ်ခုအတွင်းရှိ request များမှ p95 latency နှင့် error rate ကို တွက်ချက်ပုံကို အောက်တွင် ကြည့်နိုင်သည် —
+
+```python
+import time
+from collections import deque
+
+class SLOMonitor:
+    def __init__(self, window_size=100):
+        # Keep only the last N requests (rolling window)
+        self.window_size = window_size
+        self.latencies = deque(maxlen=window_size)
+        self.errors = deque(maxlen=window_size)
+
+    def record(self, latency_ms, is_error):
+        # Record one request outcome
+        self.latencies.append(latency_ms)
+        self.errors.append(1 if is_error else 0)
+
+    def p95_latency(self):
+        # Sort latencies and take the 95th percentile value
+        if not self.latencies:
+            return 0.0
+        sorted_vals = sorted(self.latencies)
+        index = int(len(sorted_vals) * 0.95) - 1
+        return sorted_vals[max(index, 0)]
+
+    def error_rate(self):
+        # Error rate as a percentage of the window
+        if not self.errors:
+            return 0.0
+        return 100.0 * sum(self.errors) / len(self.errors)
+
+# Example usage
+monitor = SLOMonitor(window_size=100)
+P95_TARGET_MS = 2000
+ERROR_RATE_TARGET = 5.0
+
+monitor.record(1200, False)
+monitor.record(3500, True)
+monitor.record(900, False)
+
+current_p95 = monitor.p95_latency()
+current_error_rate = monitor.error_rate()
+
+if current_p95 > P95_TARGET_MS:
+    print(f"ALERT: p95 latency {current_p95:.0f}ms exceeds target {P95_TARGET_MS}ms")
+if current_error_rate > ERROR_RATE_TARGET:
+    print(f"ALERT: error rate {current_error_rate:.1f}% exceeds target {ERROR_RATE_TARGET}%")
+```
+
+### သတိထားရမည့်အချက်များ
+
+- SLO ကို ကြာရှည်စွာ လိုက်နာစေရန် error budget နည်းနည်းဖြင့် လျော့နိုင်သည် — error budget ဆိုသည်မှာ SLO ကို ချိုးဖျက်ခွင့်ရှိသော အချိန်ပမာဏဖြစ်သည်။
+- LLM inference ကဲ့သို့ ကြာမြင့်တတ်သော request များအတွက် timeout နှင့် retry က policy များကို p95 အပေါ် သက်ရောက်မှုရှိသဖြင့် တွဲဖက် စဉ်းစားရမည်။
+- Alert ကို တစ်ခါ လင်းလျှင် တစ်ခါ လုပ်ဆောင်စရာရှိစေရန် threshold များကို တာဝန်ခံနိုင်သော အဆင့်တွင် သတ်မှတ်ရမည်။

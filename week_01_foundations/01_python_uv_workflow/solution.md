@@ -154,12 +154,12 @@ normalized = path.replace("\\", "/")
 in_venv = any(part == ".venv" or "venv" in part for part in normalized.split("/"))
 
 if in_venv:
-    print("OK — ဤ script သည် project ၏ .venv environment အတွင်းမှ Python interpreter ဖြင့် run နေပါသည်။")
+    print("OK - this script is running under the project .venv interpreter.")
     print(f"Interpreter: {sys.executable}")
 else:
-    print("WARNING: လက်ရှိ Python interpreter သည် project ၏ .venv အတွင်းတွင် မရှိပါ။")
+    print("WARNING: the current Python interpreter is NOT inside the project .venv.")
     print(f"Interpreter: {sys.executable}")
-    print("Environment တူညီမှုရှိစေရန် အောက်ပါ command ဖြင့် ပြန်လည် run ပါ:")
+    print("Re-run with the command below so the environment matches:")
     print("    uv run check_env.py")
 ```
 

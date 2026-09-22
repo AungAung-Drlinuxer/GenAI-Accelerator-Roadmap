@@ -87,7 +87,7 @@ if __name__ == "__main__":
         print("captured and reported to Sentry")
 ```
 
-**Hints:** DSN ကို Sentry project settings → Client Keys (DSN) တွင် ရနိုင်သည်။ Local စမ်းရန် `sentry_sdk.init()` မှ ပြန်တင်ခဲ့ပြီး Sentry UI ။ Issues page တွင် ကြည့်ပါ။
+**Hints:** DSN ကို Sentry project settings → Client Keys (DSN) တွင် ရနိုင်သည်။ Local စမ်းရန် `sentry_sdk.init()` မှ ပြန်တင်ခဲ့ပြီး Sentry UI။ Issues page တွင် ကြည့်ပါ။
 
 **Expected behavior:** Script run လျှင် Sentry dashboard ၌ `ZeroDivisionError` issue အသစ်တစ်ခု ပေါ်လာပြီး stack trace နှင့် context များ ပြသည်။
 

@@ -51,7 +51,7 @@
 **ဒီပတ်ကုန်ရင် လုပ်နိုင်ရမည့်အရာ:** FastAPI service တစ်ခုကို streaming response နှင့် ရေးနိုင်ခြင်း၊ ကြာမြင့်သော LLM job ကို Celery worker ထဲ ရွှေ့နိုင်ခြင်း၊ pgvector schema နှင့် Alembic migration ရေးနိုင်ခြင်း၊ api/worker/db/redis ပါဝင်သော docker-compose.yml ဆွဲနိုင်ခြင်း။
 
 **Checkpoint self-test:**
-1. ကြာမြင့်သော LLM generation ကို request path ထဲက ဘာကြောင့် ဖယ်ရှင်းすသလဲ? ဘယ်နေရာထားသင့်လဲ?
+1. ကြာမြင့်သော LLM generation ကို request path ထဲက ဘာကြောင့် ဖယ်ရှင်းသလဲ? ဘယ်နေရာထားသင့်လဲ?
 2. HNSW နှင့် IVFFlat index တို့ရဲ့ ကွာခြားချက်က ဘာလဲ?
 3. Idempotency key က duplicate job execution ကို ဘယ်လို တားဆီးလဲ?
 4. Multi-stage Docker build က image size ကို ဘယ်လို လျှော့ချပေးလဲ?
@@ -102,7 +102,7 @@
 - `week_06_deployment/03_observability_alerts` — structured logging, Sentry, SLOs, on-call playbook
 - `week_06_deployment/04_security_secrets` — vault, least-privilege roles, scanning, key rotation
 
-**ဒီပတ်ကုန်ရင် လုပ်နိုင်ရမည့်အရာ:** TLS ပါတဲ့ reverse proxy နောက်ကွယ်မှာ service deploy လုပ်နိုင်ခြင်း، CI/CD pipeline တစ်ခုကိ immutable digest နဲ့ deploy လုပ်နိုင်ခြင်း၊ p95 latency/error rate SLO တပ်ဆင်နိုင်ခြင်း၊ secrets ကို vault မှာ စီမံနိုင်ခြင်း။
+**ဒီပတ်ကုန်ရင် လုပ်နိုင်ရမည့်အရာ:** TLS ပါတဲ့ reverse proxy နောက်ကွယ်မှာ service deploy လုပ်နိုင်ခြင်း၊ CI/CD pipeline တစ်ခုကိ immutable digest နဲ့ deploy လုပ်နိုင်ခြင်း၊ p95 latency/error rate SLO တပ်ဆင်နိုင်ခြင်း၊ secrets ကို vault မှာ စီမံနိုင်ခြင်း။
 
 **Checkpoint self-test:**
 1. Deploy ကို digest အလိုက် လုပ်ခြင်းက tag အလိုက် လုပ်ခြင်းထက် ဘာကြောင့် ပိုစိတ်ချရလဲ?

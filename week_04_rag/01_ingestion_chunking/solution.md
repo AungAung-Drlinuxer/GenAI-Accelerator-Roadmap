@@ -11,7 +11,7 @@ def parse_text_file(file_path: str) -> str:
 def parse_markdown_sections(file_path: str) -> list[dict]:
     # Split a markdown file into sections using headings as boundaries
     lines = pathlib.Path(file_path).read_text(encoding="utf-8").splitlines()
-    sections, current_title, current_body = [], "前言", []
+    sections, current_title, current_body = [], "preface", []
     for line in lines:
         if line.startswith("#"):
             if current_body:

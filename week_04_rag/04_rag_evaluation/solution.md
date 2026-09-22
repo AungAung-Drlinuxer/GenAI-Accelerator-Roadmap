@@ -91,7 +91,7 @@ def simple_faithfulness_check(answer, contexts):
     # Naive approach: split the answer into sentences, then verify each
     # sentence shares at least one meaningful token with some context chunk.
     import re
-    sentences = [s.strip() for s in re.split(r"[။.!?\n]", answer) if s.strip()]
+    sentences = [s.strip() for s in re.split(r"[။.!?\n]", answer) if s.strip()]  # intentional: Burmese sentence punctuation
     supported = 0
     for sentence in sentences:
         tokens = set(re.findall(r"\w+", sentence.lower()))

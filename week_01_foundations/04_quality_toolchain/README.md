@@ -17,7 +17,7 @@ AI engineering project များအတွက် code အရည်အသွေ
 2. **ruff configuration** — `pyproject.toml` ထဲမှာ rule selection နှင့် per-file ignores သတ်မှတ်နည်း။
 3. **pytest fundamentals** — test ဖိုင် naming convention, `assert`, နှင့် test discovery အလုပ်လုပ်ပုံ။
 4. **Fixtures** — `@pytest.fixture` ဖြင့် shared test data နှင့် setup/teardown စီမံနည်း၊ `conftest.py`။
-5. **Parameterized tests** — `@pytest.mark.parametrize` ဖြင့် ဖြစ်နိုင်ခြေများ متعدdesc ကွဲပြားသော input များကို တစ်ပိတ် test လုပ်နည်း။
+5. **Parameterized tests** — `@pytest.mark.parametrize` ဖြင့် ဖြစ်နိုင်ခြေများ ကွဲပြားသော input များကို တစ်ပိတ် test လုပ်နည်း။
 6. **Secrets hygiene** — API key များကို `os.environ` / `python-dotenv` ဖြင့် ဖတ်ယူပြီး source code ထဲ မရေးသွင်းရခြင်းအကြောင်း။
 7. **.env ကို git က ကာကွယ်ခြင်း** — `.gitignore` ထည့်သွင်းခြင်း၊ မသတိထားမိဘူး key ကို history ထဲပါသွားပါက လုပ်ရမည့်အရာ။
 8. **Pre-commit gates** — `pre-commit` framework သုံးပြီး commit မတင်ခင် ruff နှင့် secret scanning ကို အလိုအလျောက် လည်ပတ်စေနည်း။

@@ -33,7 +33,7 @@ response = client.chat.completions.create(
 )
 print(response.choices[0].message.content)
 # Expected output:
-# API ဆိုတာ ဆော့ဖ်ဝဲလ်များ တစ်ခုနှင့်တစ်ခု ဆက်သွယ်နိုင်စေတဲ့ သဘောတရားဖြစ်သည်...
+# An API is how two pieces of software talk to each other...
 ```
 
 ### လက်တွေ့မှာ ဘာကြောင့် အရေးကြီးလဲ

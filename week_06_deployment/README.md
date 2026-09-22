@@ -20,7 +20,7 @@
 ဒီပတ်ပြီးဆုံးရင် သင်ဟာ —
 
 - AI service တစ်ခုကို container ထဲကနေ production deployment တစ်ခုအထိ ကိုယ့်ဖာသာ deploy တက်နိုင်ပါမယ်
-- CI/CD pipeline တစ်ခုကို ကိုယ်တိုင်ရေးပြီး deploy လုပ်တိုင်းး smoke test စစ်ပြီး မအောင်ရင် rollback လုပ်နိုင်ပါမယ်
+- CI/CD pipeline တစ်ခုကို ကိုယ်တိုင်ရေးပြီး deploy လုပ်တိုင်း smoke test စစ်ပြီး မအောင်ရင် rollback လုပ်နိုင်ပါမယ်
 - production မှာ error တက်ရင် alert ချက်ဖမ်းပြီး SLO အရ ဆုံးရှုံးမှုကို တိုင်းတာနိုင်ပါမယ်
 - secrets တွေကို git ထဲမထည့်ဘဲ vault နဲ့ စီမံပြီး security အခြေခံများကို အသုံးချနိုင်ပါမယ်
 
